@@ -1,4 +1,5 @@
-const container = document.getElementById("globeContainer");
+window.onload = () => {
+
 
 
 const scene = new THREE.Scene();
@@ -51,3 +52,4 @@ camera.aspect = container.clientWidth / container.clientHeight;
 camera.updateProjectionMatrix();
 renderer.setSize(container.clientWidth, container.clientHeight);
 });
+};

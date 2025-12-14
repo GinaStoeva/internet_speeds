@@ -141,3 +141,4 @@ function updateCharts() {
     });
   }
 }
+document.getElementById("topN").oninput = updateCharts;

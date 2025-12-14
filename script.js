@@ -1,95 +1,121 @@
 let rawData = [];
-let chartTop, chartCountry, chartCompare;
+let chart1, chart2, chart3;
 
-fetch("./data.csv")
-  .then(res => res.text())
-  .then(text => {
-    const lines = text.trim().split(/\r?\n/);
-    const headers = lines[0].split(",");
+const statusEl = document.getElementById("status");
+const selectEl = document.getElementById("countrySelect");
 
-    const countryIdx = headers.indexOf("Country");
-    const speed2023Idx = headers.indexOf("Speed 2023");
-    const speed2024Idx = headers.indexOf("Speed 2024");
+statusEl.textContent = "Loading dataset...";
 
-    for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].split(",");
-      if (!cols[countryIdx]) continue;
+// ---------- LOAD DATA ----------
+fetch("data/internet_speeds.json")
+  .then(res => res.json())
+  .then(data => {
+    rawData = data;
 
-      rawData.push({
-        country: cols[countryIdx],
-        speed2023: parseFloat(cols[speed2023Idx]) || 0,
-        speed2024: parseFloat(cols[speed2024Idx]) || 0
-      });
+    if (!Array.isArray(rawData) || rawData.length === 0) {
+      statusEl.textContent = "❌ Data loaded but empty.";
+      return;
     }
 
-    document.getElementById("status").innerText =
-      `Loaded ${rawData.length} countries`;
-
+    statusEl.textContent = `Loaded ${rawData.length} countries`;
     populateDropdown();
-    drawCharts();
+    initCharts();
+  })
+  .catch(err => {
+    statusEl.textContent = "❌ Failed to load JSON data.";
+    console.error(err);
   });
 
+// ---------- DROPDOWN ----------
 function populateDropdown() {
-  const select = document.getElementById("countrySelect");
-  rawData.forEach(d => {
-    const opt = document.createElement("option");
-    opt.value = d.country;
-    opt.textContent = d.country;
-    select.appendChild(opt);
-  });
+  selectEl.innerHTML = `<option value="">-- Choose a country --</option>`;
 
-  select.addEventListener("change", drawCharts);
+  rawData
+    .map(d => d.country)
+    .sort()
+    .forEach(country => {
+      const opt = document.createElement("option");
+      opt.value = country;
+      opt.textContent = country;
+      selectEl.appendChild(opt);
+    });
+
+  selectEl.addEventListener("change", handleCountryChange);
 }
 
-function drawCharts() {
-  const selected = document.getElementById("countrySelect").value;
-  const selectedData = rawData.find(d => d.country === selected);
+// ---------- CHART SETUP ----------
+function initCharts() {
+  chart1 = createLineChart("chart1", "Internet Speed Over Time");
+  chart2 = createBarChart("chart2", "2024 Speed by Country");
+  chart3 = createBarChart("chart3", "2023 → 2024 Change");
+}
 
-  Chart.getChart("chart1")?.destroy();
-  Chart.getChart("chart2")?.destroy();
-  Chart.getChart("chart3")?.destroy();
-
-  // TOP 10 COUNTRIES
-  const top = [...rawData]
-    .sort((a, b) => b.speed2024 - a.speed2024)
-    .slice(0, 10);
-
-  chartTop = new Chart(document.getElementById("chart1"), {
-    type: "bar",
-    data: {
-      labels: top.map(d => d.country),
-      datasets: [{
-        label: "Top 10 Internet Speeds (2024)",
-        data: top.map(d => d.speed2024)
-      }]
-    }
-  });
-
-  if (!selectedData) return;
-
-  // COUNTRY COMPARISON
-  chartCountry = new Chart(document.getElementById("chart2"), {
-    type: "bar",
-    data: {
-      labels: ["2023", "2024"],
-      datasets: [{
-        label: selectedData.country,
-        data: [selectedData.speed2023, selectedData.speed2024]
-      }]
-    }
-  });
-
-  // GLOBAL VS COUNTRY
-  const globalAvg =
-    rawData.reduce((sum, d) => sum + d.speed2024, 0) / rawData.length;
-
-  chartCompare = new Chart(document.getElementById("chart3"), {
-    type: "doughnut",
-    data: {
-      labels: ["Country", "Global Avg"],
-      datasets: [{
-        data: [selectedData.speed2024, globalAvg]
-      }]
+function createLineChart(id, title) {
+  return new Chart(document.getElementById(id), {
+    type: "line",
+    data: { labels: [], datasets: [] },
+    options: {
+      responsive: true,
+      plugins: { title: { display: true, text: title } }
     }
   });
 }
+
+function createBarChart(id, title) {
+  return new Chart(document.getElementById(id), {
+    type: "bar",
+    data: { labels: [], datasets: [] },
+    options: {
+      responsive: true,
+      plugins: { title: { display: true, text: title } }
+    }
+  });
+}
+
+// ---------- INTERACTION ----------
+function handleCountryChange() {
+  const country = selectEl.value;
+  if (!country) return;
+
+  const row = rawData.find(d => d.country === country);
+  if (!row) return;
+
+  updateCharts(row);
+}
+
+// ---------- UPDATE CHARTS ----------
+function updateCharts(row) {
+  const years = [
+    "year_2017","year_2018","year_2019","year_2020",
+    "year_2021","year_2022","year_2023","year_2024"
+  ];
+
+  const speeds = years.map(y => row[y] ?? 0);
+
+  // Line chart
+  chart1.data.labels = years.map(y => y.replace("year_",""));
+  chart1.data.datasets = [{
+    label: row.country,
+    data: speeds,
+    borderWidth: 2,
+    fill: false
+  }];
+  chart1.update();
+
+  // Bar chart 2024
+  chart2.data.labels = [row.country];
+  chart2.data.datasets = [{
+    label: "2024 Speed (Mbps)",
+    data: [row.year_2024 ?? 0]
+  }];
+  chart2.update();
+
+  // Change chart
+  chart3.data.labels = [row.country];
+  chart3.data.datasets = [{
+    label: "Change 2023 → 2024",
+    data: [(row.year_2024 ?? 0) - (row.year_2023 ?? 0)]
+  }];
+  chart3.update();
+}
+

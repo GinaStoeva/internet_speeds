@@ -54,7 +54,8 @@ function buildDropdown() {
       selectEl.appendChild(opt);
     });
 
-  selectEl.addEventListener("change", updateComparisonChart);
+  document.getElementById("compareBtn").addEventListener("click", updateComparisonChart);
+
 }
 
 // ---------- CHART CREATION ----------
@@ -87,15 +88,27 @@ function years() {
 function updateComparisonChart() {
   const selected = [...selectEl.selectedOptions].map(o => o.value);
 
+  if (selected.length === 0) {
+    statusEl.textContent = "Select at least one country to compare";
+    return;
+  }
+
+  statusEl.textContent = `Comparing ${selected.length} countries`;
+
   charts.compare.data.datasets = selected.map(country => {
     const row = rawData.find(d => d.country === country);
+
     return {
       label: country,
       data: years().map(y => row[`year_${y}`] ?? 0),
       borderWidth: 2,
-      fill: false
+      tension: 0.2
     };
   });
+
+  charts.compare.update();
+}
+
 
   charts.compare.update();
 }

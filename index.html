@@ -7,6 +7,10 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+  <!-- Globe libraries (SAFE) -->
+  <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
+  <script src="https://unpkg.com/three-globe"></script>
+
   <style>
     body {
       margin: 0;
@@ -35,6 +39,21 @@
     select {
       font-size: 16px;
       padding: 8px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 40px;
+      margin-bottom: 15px;
+    }
+
+    #globeContainer {
+      width: 100%;
+      height: 400px;
+      max-width: 1000px;
+      margin: 0 auto 40px auto;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
     }
 
     .charts {
@@ -73,6 +92,11 @@
     </select>
   </div>
 
+  <!-- 🌍 GLOBE SECTION -->
+  <h2>🌐 Global View</h2>
+  <div id="globeContainer"></div>
+
+  <!-- 📊 CHARTS -->
   <div class="charts">
     <canvas id="chart1" height="300"></canvas>
     <canvas id="chart2" height="300"></canvas>
@@ -86,6 +110,8 @@
 
   <!-- MAIN SCRIPT -->
   <script src="script.js"></script>
+  <!-- GLOBE SCRIPT (SAFE TO FAIL) -->
+  <script src="globe.js"></script>
 
 </body>
 </html>

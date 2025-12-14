@@ -1,5 +1,8 @@
 let rawData = [];
 }
+if (!document.getElementById("barChart")) {
+  console.error("Canvas not found");
+}
 
 
 function updateCountrySelect() {

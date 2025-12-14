@@ -1,99 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Global Internet Speed Analyzer</title>
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- Three.js + Globe -->
-  <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
-  <script src="https://unpkg.com/three-globe"></script>
-  <script src="https://unpkg.com/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
-
   <style>
     body {
       margin: 0;
-      background: #020617;
+      padding: 20px;
+      background-color: #020617;
       color: white;
       font-family: Arial, sans-serif;
     }
 
-    header {
+    h1 {
       text-align: center;
-      padding: 20px;
+      margin-bottom: 5px;
     }
 
     #status {
+      text-align: center;
       color: #38bdf8;
+      margin-bottom: 25px;
     }
 
     .controls {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
 
-    select, input {
-      padding: 8px;
+    select {
       font-size: 16px;
-    }
-
-    #globeContainer {
-      width: 100%;
-      height: 500px;
+      padding: 8px;
     }
 
     .charts {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 30px;
-      padding: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
     }
 
     canvas {
-      background: #020617;
-      border-radius: 12px;
+      background-color: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
       padding: 10px;
     }
 
     footer {
       text-align: center;
-      padding: 20px;
-      color: #94a3b8;
+      margin-top: 40px;
       font-size: 14px;
+      color: #94a3b8;
     }
   </style>
 </head>
 
 <body>
 
-<header>
   <h1>🌍 Global Internet Speed Analyzer</h1>
   <p id="status">Loading data...</p>
-</header>
 
-<div class="controls">
-  <label>Select Country:</label><br><br>
-  <select id="countrySelect"></select>
-</div>
+  <div class="controls">
+    <label for="countrySelect">Select a country:</label><br><br>
+    <select id="countrySelect">
+      <option value="">-- Choose a country --</option>
+    </select>
+  </div>
 
-<div id="globeContainer"></div>
+  <div class="charts">
+    <canvas id="chart1" height="300"></canvas>
+    <canvas id="chart2" height="300"></canvas>
+    <canvas id="chart3" height="300"></canvas>
+  </div>
 
-<div class="charts">
-  <canvas id="chartTop"></canvas>
-  <canvas id="chartCountry"></canvas>
-  <canvas id="chartRegion"></canvas>
-  <canvas id="chartComparison"></canvas>
-</div>
+  <footer>
+    Data source: Global Internet Speed Dataset (2017–2024)<br>
+    Sophomore Java Data Visualization Project
+  </footer>
 
-<footer>
-  Data source: Global Internet Speed Dataset (2017–2024)<br>
-  Sophomore Java Data Visualization Project
-</footer>
-
-<script src="script.js"></script>
+  <!-- MAIN SCRIPT -->
+  <script src="script.js"></script>
 
 </body>
 </html>
-

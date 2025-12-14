@@ -1,57 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Global Internet Speed Analyzer</title>
+  <meta charset="UTF-8">
+  <title>Global Internet Speed Analyzer</title>
 
+  <!-- Chart.js (REQUIRED) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
 
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    #status {
+      text-align: center;
+      color: #38bdf8;
+      margin-bottom: 20px;
+    }
 
+    .controls {
+      text-align: center;
+      margin-bottom: 30px;
+    }
 
-<!-- Three.js -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
-</head>
-<body>
+    select {
+      padding: 8px;
+      font-size: 16px;
+    }
 
+    .charts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
 
-<header>
-<h1>🌍 Global Internet Speed Analyzer</h1>
-<p>Java Data Analysis • Interactive Web Dashboard</p>
-</header>
+    canvas {
+      background: #020617;
+      padding: 15px;
+      border-radius: 10px;
+    }
 
-
-<section class="controls">
-<select id="regionSelect"></select>
-<select id="countrySelect"></select>
-</section>
-
-
-<div id="globeContainer"></div>
-<label>
-  Top N:
-  <input type="range" id="topN" min="5" max="25" value="10">
-</label>
-
-
-<section class="charts">
-<canvas id="barChart"></canvas>
-<canvas id="rankChart"></canvas>
-<canvas id="regionChart"></canvas>
-<canvas id="lineChart"></canvas>
-
-</section>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
-
-<!-- Chart.js (required for charts) -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script src="globe.js"></script>
-<script src="script.js"></script>
-</body>
-</html>
+    #globe {
+      margin-top: 40px;
+      text-align: center;
+      fon

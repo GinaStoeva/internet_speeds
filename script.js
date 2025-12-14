@@ -5,16 +5,36 @@ const statusEl = document.getElementById("status");
 const selectEl = document.getElementById("countrySelect");
 
 // ---------- LOAD DATA ----------
-fetch("data/internet_speeds.json")
-  .then(res => res.json())
-  .then(data => {
-    rawData = data;
+Papa.parse("data/internet_speeds.csv", {
+  download: true,
+  header: true,
+  skipEmptyLines: true,
+  complete: function(results) {
+
+    rawData = results.data.map(d => ({
+      country: d.country,
+      major_area: d.major_area,
+      region: d.region,
+      year_2017: parseFloat(d["year 2017"]),
+      year_2018: parseFloat(d["year 2018"]),
+      year_2019: parseFloat(d["year 2019"]),
+      year_2020: parseFloat(d["year 2020"]),
+      year_2021: parseFloat(d["year 2021"]),
+      year_2022: parseFloat(d["year 2022"]),
+      year_2023: parseFloat(d["year 2023"]),
+      year_2024: parseFloat(d["year 2024"])
+    }));
+
+    rawData = rawData.filter(d => d.country);
+
     statusEl.textContent = `Loaded ${rawData.length} countries`;
 
     buildDropdown();
     buildCharts();
     showRankings();
-  })
+  }
+});
+
   .catch(() => {
     statusEl.textContent = "❌ Failed to load dataset";
   });

@@ -122,4 +122,3 @@ function updateRankings() {
   }];
   charts.top.update();
 }
-

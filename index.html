@@ -107,12 +107,16 @@
   <p id="status">Loading data...</p>
 </header>
 
-<div class="controls glass">
-  <label for="countrySelect"><strong>Select a country</strong></label><br><br>
-  <select id="countrySelect">
-    <option value="">-- Choose a country --</option>
-  </select>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<div class="controls">
+  <label for="countrySelect">Select one or more countries:</label><br><br>
+
+  <select id="countrySelect" multiple size="10" style="width:300px;"></select>
+
+  <br><br>
+  <button id="compareBtn">Compare Selected Countries</button>
 </div>
+
 
 <h2>🌐 Global Internet Overview</h2>
 <div id="globeContainer" class="glass"></div>

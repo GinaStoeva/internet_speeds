@@ -1,8 +1,20 @@
 [
-{
-"country": "United States",
-"region": "Northern America",
-"speed2023": 210.4,
-"speed2024": 242.27
-}
+  {
+    "country": "United States",
+    "region": "Northern America",
+    "speed2023": 210.4,
+    "speed2024": 242.27
+  },
+  {
+    "country": "South Korea",
+    "region": "Eastern Asia",
+    "speed2023": 119.58,
+    "speed2024": 157.63
+  },
+  {
+    "country": "Germany",
+    "region": "Western Europe",
+    "speed2023": 85,
+    "speed2024": 90.63
+  }
 ]

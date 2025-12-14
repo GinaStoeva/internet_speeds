@@ -90,7 +90,11 @@ function updateCharts() {
   // ---------- RANKING CHART ----------
   if (rankChart) rankChart.destroy();
   rankChart = new Chart(document.getElementById("rankChart"), {
-    type: "horizontalBar",
+    type: "bar",
+options: {
+  indexAxis: "y"
+},
+
     data: {
       labels: sorted.map(d => d.country),
       datasets: [{

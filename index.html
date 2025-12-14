@@ -1,49 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>🌍 Global Internet Speed Analyzer</title>
+  <meta charset="UTF-8" />
+  <title>🌍 Global Internet Speed Analyzer</title>
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- Three.js -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<style>
-  body {
-    margin: 0;
-    padding: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #e0f2fe, #f8fafc);
-    color: #0f172a;
-  }
-  h1 { text-align: center; font-weight: 700; }
-  #status { text-align: center; color: #0284c7; margin-bottom: 15px; }
-  .controls { text-align: center; margin-bottom: 30px; }
-  select { padding: 10px; font-size: 15px; width: 280px; cursor: pointer; }
-  .charts {
-    max-width: 1200px;
-    margin: auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 30px;
-  }
-  canvas {
-    background: rgba(255,255,255,0.85);
-    border-radius: 14px;
-    padding: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-  }
-  #globeContainer {
-    margin: 30px auto;
-    width: 450px;
-    height: 450px;
-    border-radius: 50%;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    background: rgba(255,255,255,0.65);
-  }
-  footer { margin-top: 40px; text-align: center; font-size: 14px; color: #475569; }
-</style>
+  <!-- PapaParse -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <!-- Three.js -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #e0f2fe, #f0f9ff);
+      color: #0f172a;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.2rem;
+      margin-bottom: 5px;
+      color: #0369a1;
+    }
+
+    #status {
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 1.1rem;
+      color: #0284c7;
+    }
+
+    .controls {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    select {
+      padding: 10px;
+      font-size: 16px;
+      width: 320px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    select:focus {
+      border-color: #0ea5e9;
+      box-shadow: 0 0 10px rgba(14,165,233,0.3);
+    }
+
+    .charts {
+      max-width: 1200px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    canvas {
+      background: rgba(255,255,255,0.85);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    #globeContainer {
+      margin: 30px auto;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    footer {
+      margin-top: 50px;
+      text-align: center;
+      font-size: 14px;
+      color: #475569;
+    }
+  </style>
 </head>
 
 <body>
@@ -54,22 +97,21 @@
 <div id="globeContainer"></div>
 
 <div class="controls">
-  <label><b>Select countries to compare</b></label><br><br>
+  <label>Select countries to compare</label><br><br>
   <select id="countrySelect" multiple size="10"></select>
 </div>
 
 <div class="charts">
   <canvas id="chartTop"></canvas>
-  <canvas id="chart2"></canvas>
-  <canvas id="chartBottom"></canvas>
   <canvas id="chartCompare"></canvas>
+  <canvas id="chartImproved"></canvas>
   <canvas id="chartInequality"></canvas>
   <canvas id="chartCorrelation"></canvas>
 </div>
 
 <footer>
-Global Internet Speed Dataset (2017–2024)<br />
-Sophomore Java Data Visualization Project
+  Global Internet Speed Dataset (2017–2024)<br />
+  Sophomore Java Data Visualization Project
 </footer>
 
 <script src="script.js"></script>

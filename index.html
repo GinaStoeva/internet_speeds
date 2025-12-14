@@ -52,4 +52,53 @@
     #globe {
       margin-top: 40px;
       text-align: center;
-      fon
+      font-size: 24px;
+      padding: 40px;
+      border: 2px dashed #38bdf8;
+      border-radius: 12px;
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 14px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🌍 Global Internet Speed Analyzer</h1>
+
+  <!-- VISIBLE DEBUG LINE -->
+  <p id="status">Loading data...</p>
+
+  <!-- USER CONTROLS -->
+  <div class="controls">
+    <label for="countrySelect">Select a country:</label>
+    <br><br>
+    <select id="countrySelect"></select>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="charts">
+    <canvas id="chart1"></canvas>
+    <canvas id="chart2"></canvas>
+  </div>
+
+  <!-- GLOBE PLACEHOLDER -->
+  <div id="globe">
+    🌐 Interactive globe loading...
+  </div>
+
+  <footer>
+    Data source: Global Internet Speed Dataset (2017–2024)<br>
+    Project by a Sophomore Java Student
+  </footer>
+
+  <!-- YOUR SCRIPTS (ORDER MATTERS) -->
+  <script src="script.js"></script>
+
+</body>
+</html>

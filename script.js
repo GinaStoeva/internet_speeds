@@ -1,34 +1,28 @@
 let rawData = [];
-let chart1, chart2, chart3;
+let charts = {};
 
 const statusEl = document.getElementById("status");
 const selectEl = document.getElementById("countrySelect");
-
-statusEl.textContent = "Loading dataset...";
 
 // ---------- LOAD DATA ----------
 fetch("data/internet_speeds.json")
   .then(res => res.json())
   .then(data => {
     rawData = data;
-
-    if (!Array.isArray(rawData) || rawData.length === 0) {
-      statusEl.textContent = "❌ Data loaded but empty.";
-      return;
-    }
-
     statusEl.textContent = `Loaded ${rawData.length} countries`;
-    populateDropdown();
-    initCharts();
+
+    buildDropdown();
+    buildCharts();
+    showRankings();
   })
-  .catch(err => {
-    statusEl.textContent = "❌ Failed to load JSON data.";
-    console.error(err);
+  .catch(() => {
+    statusEl.textContent = "❌ Failed to load dataset";
   });
 
-// ---------- DROPDOWN ----------
-function populateDropdown() {
-  selectEl.innerHTML = `<option value="">-- Choose a country --</option>`;
+// ---------- DROPDOWN (MULTI SELECT) ----------
+function buildDropdown() {
+  selectEl.multiple = true;
+  selectEl.size = 8;
 
   rawData
     .map(d => d.country)
@@ -40,82 +34,95 @@ function populateDropdown() {
       selectEl.appendChild(opt);
     });
 
-  selectEl.addEventListener("change", handleCountryChange);
+  selectEl.addEventListener("change", updateComparisonChart);
 }
 
-// ---------- CHART SETUP ----------
-function initCharts() {
-  chart1 = createLineChart("chart1", "Internet Speed Over Time");
-  chart2 = createBarChart("chart2", "2024 Speed by Country");
-  chart3 = createBarChart("chart3", "2023 → 2024 Change");
-}
-
-function createLineChart(id, title) {
-  return new Chart(document.getElementById(id), {
+// ---------- CHART CREATION ----------
+function buildCharts() {
+  charts.compare = new Chart(chart1, {
     type: "line",
-    data: { labels: [], datasets: [] },
-    options: {
-      responsive: true,
-      plugins: { title: { display: true, text: title } }
-    }
+    data: { labels: years(), datasets: [] },
+    options: { plugins: { title: { display: true, text: "Country Comparison (2017–2024)" } } }
   });
-}
 
-function createBarChart(id, title) {
-  return new Chart(document.getElementById(id), {
+  charts.improved = new Chart(chart2, {
     type: "bar",
     data: { labels: [], datasets: [] },
-    options: {
-      responsive: true,
-      plugins: { title: { display: true, text: title } }
-    }
+    options: { plugins: { title: { display: true, text: "Most Improved Countries (2023 → 2024)" } } }
+  });
+
+  charts.inequality = new Chart(chart3, {
+    type: "bar",
+    data: { labels: [], datasets: [] },
+    options: { plugins: { title: { display: true, text: "Digital Inequality Index by Region" } } }
   });
 }
 
-// ---------- INTERACTION ----------
-function handleCountryChange() {
-  const country = selectEl.value;
-  if (!country) return;
-
-  const row = rawData.find(d => d.country === country);
-  if (!row) return;
-
-  updateCharts(row);
+// ---------- YEARS ----------
+function years() {
+  return ["2017","2018","2019","2020","2021","2022","2023","2024"];
 }
 
-// ---------- UPDATE CHARTS ----------
-function updateCharts(row) {
-  const years = [
-    "year_2017","year_2018","year_2019","year_2020",
-    "year_2021","year_2022","year_2023","year_2024"
-  ];
+// ---------- MULTI-COUNTRY COMPARISON ----------
+function updateComparisonChart() {
+  const selected = [...selectEl.selectedOptions].map(o => o.value);
 
-  const speeds = years.map(y => row[y] ?? 0);
+  charts.compare.data.datasets = selected.map(country => {
+    const row = rawData.find(d => d.country === country);
+    return {
+      label: country,
+      data: years().map(y => row[`year_${y}`] ?? 0),
+      borderWidth: 2,
+      fill: false
+    };
+  });
 
-  // Line chart
-  chart1.data.labels = years.map(y => y.replace("year_",""));
-  chart1.data.datasets = [{
-    label: row.country,
-    data: speeds,
-    borderWidth: 2,
-    fill: false
-  }];
-  chart1.update();
-
-  // Bar chart 2024
-  chart2.data.labels = [row.country];
-  chart2.data.datasets = [{
-    label: "2024 Speed (Mbps)",
-    data: [row.year_2024 ?? 0]
-  }];
-  chart2.update();
-
-  // Change chart
-  chart3.data.labels = [row.country];
-  chart3.data.datasets = [{
-    label: "Change 2023 → 2024",
-    data: [(row.year_2024 ?? 0) - (row.year_2023 ?? 0)]
-  }];
-  chart3.update();
+  charts.compare.update();
 }
 
+// ---------- MOST / LEAST IMPROVED ----------
+function showRankings() {
+  const improvements = rawData.map(r => ({
+    country: r.country,
+    change: (r.year_2024 ?? 0) - (r.year_2023 ?? 0)
+  }));
+
+  improvements.sort((a,b) => b.change - a.change);
+
+  const top = improvements.slice(0, 10);
+  charts.improved.data.labels = top.map(d => d.country);
+  charts.improved.data.datasets = [{
+    label: "Mbps Increase",
+    data: top.map(d => d.change)
+  }];
+  charts.improved.update();
+
+  showInequality();
+}
+
+// ---------- DIGITAL INEQUALITY INDEX ----------
+function showInequality() {
+  const regions = {};
+
+  rawData.forEach(r => {
+    if (!regions[r.region]) regions[r.region] = [];
+    regions[r.region].push(r.year_2024 ?? 0);
+  });
+
+  const labels = [];
+  const values = [];
+
+  for (const region in regions) {
+    const speeds = regions[region];
+    const diff = Math.max(...speeds) - Math.min(...speeds);
+    labels.push(region);
+    values.push(diff);
+  }
+
+  charts.inequality.data.labels = labels;
+  charts.inequality.data.datasets = [{
+    label: "DII (Mbps)",
+    data: values
+  }];
+  charts.inequality.update();
+}

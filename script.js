@@ -68,46 +68,73 @@ function updateCharts() {
   const region = regionSelect.value;
   const country = countrySelect.value;
 
-  const filtered = rawData.filter(d =>
-    (region === "All" || d.region === region) &&
-    (country === "All" || d.country === country)
+  let filtered = rawData.filter(d =>
+    (region === "All" || d.region === region)
   );
 
-  const barCanvas = document.getElementById("barChart");
-  if (!barCanvas) {
-    console.error("barChart canvas missing");
-    return;
-  }
-
-  const labels = filtered.map(d => d.country);
-  const speeds = filtered.map(d => d.speed2024);
+  // ---------- BAR CHART (Top Countries) ----------
+  const sorted = [...filtered].sort((a, b) => b.speed2024 - a.speed2024).slice(0, 10);
 
   if (barChart) barChart.destroy();
-
-  barChart = new Chart(barCanvas, {
+  barChart = new Chart(document.getElementById("barChart"), {
     type: "bar",
     data: {
-      labels,
+      labels: sorted.map(d => d.country),
       datasets: [{
-        label: "2024 Avg Speed (Mbps)",
-        data: speeds
+        label: "Top 10 Speeds (2024)",
+        data: sorted.map(d => d.speed2024)
       }]
     }
   });
 
-  if (country !== "All" && filtered.length === 1) {
-    const c = filtered[0];
-    const lineCanvas = document.getElementById("lineChart");
-    if (!lineCanvas) return;
+  // ---------- RANKING CHART ----------
+  if (rankChart) rankChart.destroy();
+  rankChart = new Chart(document.getElementById("rankChart"), {
+    type: "horizontalBar",
+    data: {
+      labels: sorted.map(d => d.country),
+      datasets: [{
+        label: "Country Ranking",
+        data: sorted.map(d => d.speed2024)
+      }]
+    }
+  });
+
+  // ---------- REGION AVERAGES ----------
+  const regionMap = {};
+  filtered.forEach(d => {
+    regionMap[d.region] = (regionMap[d.region] || []).concat(d.speed2024);
+  });
+
+  const regionLabels = Object.keys(regionMap);
+  const regionAvgs = regionLabels.map(r =>
+    regionMap[r].reduce((a, b) => a + b, 0) / regionMap[r].length
+  );
+
+  if (regionChart) regionChart.destroy();
+  regionChart = new Chart(document.getElementById("regionChart"), {
+    type: "bar",
+    data: {
+      labels: regionLabels,
+      datasets: [{
+        label: "Regional Average Speed",
+        data: regionAvgs
+      }]
+    }
+  });
+
+  // ---------- LINE CHART (Country Trend) ----------
+  if (country !== "All") {
+    const c = rawData.find(d => d.country === country);
+    if (!c) return;
 
     if (lineChart) lineChart.destroy();
-
-    lineChart = new Chart(lineCanvas, {
+    lineChart = new Chart(document.getElementById("lineChart"), {
       type: "line",
       data: {
         labels: ["2023", "2024"],
         datasets: [{
-          label: c.country + " Speed Trend",
+          label: `${c.country} Speed Trend`,
           data: [c.speed2023, c.speed2024]
         }]
       }

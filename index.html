@@ -1,142 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Global Internet Speed Analyzer</title>
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- Three.js (globe) -->
-  <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
-  <script src="https://unpkg.com/three-globe"></script>
+  <!-- PapaParse -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <!-- Three.js (3D Globe) -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
 
   <style>
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      padding: 20px;
+      font-family: Arial, sans-serif;
       background: linear-gradient(135deg, #e0f2fe, #f8fafc);
       color: #0f172a;
     }
 
-    header {
-      text-align: center;
-      padding: 40px 20px 10px;
-    }
-
     h1 {
-      font-size: 2.3rem;
-      margin-bottom: 5px;
+      text-align: center;
     }
 
     #status {
-      color: #334155;
-      font-size: 0.95rem;
-    }
-
-    .glass {
-      background: rgba(255, 255, 255, 0.65);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      border-radius: 16px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+      text-align: center;
+      color: #0284c7;
+      margin-bottom: 20px;
     }
 
     .controls {
-      max-width: 900px;
-      margin: 30px auto;
-      padding: 20px;
       text-align: center;
+      margin-bottom: 30px;
     }
 
     select {
-      font-size: 16px;
-      padding: 10px 14px;
-      border-radius: 8px;
-      border: 1px solid #cbd5f5;
-      background: white;
-    }
-
-    h2 {
-      text-align: center;
-      margin: 50px 0 20px;
-    }
-
-    #globeContainer {
-      max-width: 1000px;
-      height: 420px;
-      margin: 0 auto 50px;
+      padding: 10px;
+      font-size: 15px;
+      width: 280px;
     }
 
     .charts {
       max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 20px 40px;
+      margin: auto;
       display: grid;
       grid-template-columns: 1fr;
-      gap: 30px;
-    }
-
-    @media (min-width: 900px) {
-      .charts {
-        grid-template-columns: 1fr 1fr;
-      }
+      gap: 40px;
     }
 
     canvas {
-      background: white;
+      background: rgba(255,255,255,0.75);
       border-radius: 14px;
-      padding: 12px;
+      padding: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    #globeContainer {
+      margin: 50px auto;
+      width: 420px;
+      height: 420px;
+      background: rgba(255,255,255,0.65);
+      border-radius: 50%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
     }
 
     footer {
+      margin-top: 50px;
       text-align: center;
-      font-size: 0.9rem;
+      font-size: 14px;
       color: #475569;
-      padding: 30px;
     }
   </style>
 </head>
 
 <body>
 
-<header>
-  <h1>🌍 Global Internet Speed Analyzer</h1>
-  <p id="status">Loading data...</p>
-</header>
+<h1>🌍 Global Internet Speed Analyzer</h1>
+<p id="status">Loading data…</p>
 
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <div class="controls">
-  <label for="countrySelect">Select one or more countries:</label><br><br>
-
-  <select id="countrySelect" multiple size="10" style="width:300px;"></select>
-
-  <br><br>
-  <button id="compareBtn">Compare Selected Countries</button>
+  <label>Select countries to compare</label><br><br>
+  <select id="countrySelect" multiple size="10"></select>
 </div>
 
-
-<h2>🌐 Global Internet Overview</h2>
-<div id="globeContainer" class="glass"></div>
-
-<h2>📊 Internet Speed Analysis</h2>
 <div class="charts">
-  <canvas id="chart1" height="280"></canvas>
-  <canvas id="chart2" height="280"></canvas>
-  <canvas id="chart3" height="280"></canvas>
+  <canvas id="chartCompare"></canvas>
+  <canvas id="chartTop"></canvas>
+  <canvas id="chartBottom"></canvas>
+  <canvas id="chartInequality"></canvas>
+  <canvas id="chartCorrelation"></canvas>
 </div>
+
+<div id="globeContainer"></div>
 
 <footer>
-  Data source: Global Internet Speed Dataset (2017–2024)<br>
+  Global Internet Speed Dataset (2017–2024)<br />
   Sophomore Java Data Visualization Project
 </footer>
 
-<!-- IMPORTANT: script order -->
 <script src="script.js"></script>
-<script src="globe.js"></script>
-
 </body>
 </html>
 

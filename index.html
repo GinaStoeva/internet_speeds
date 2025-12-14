@@ -1,155 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Global Internet Speed Analyzer</title>
+<meta charset="UTF-8" />
+<title>🌍 Global Internet Speed Analyzer</title>
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Three.js -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
 
-  <!-- PapaParse -->
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
-  <!-- Three.js (3D Globe) -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-
-  <!-- Google Fonts for modern typography -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    /* Base & Typography */
-    body {
-      margin: 0;
-      padding: 20px;
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(145deg, #f5f7fa, #e0f2fe);
-      color: #0f172a;
-    }
-    h1 {
-      text-align: center;
-      font-weight: 700;
-      font-size: 2.2rem;
-      margin-bottom: 5px;
-      color: #0284c7;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    #status {
-      text-align: center;
-      color: #0369a1;
-      margin-bottom: 25px;
-      font-weight: 500;
-    }
-
-    /* Controls */
-    .controls {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-    select {
-      padding: 12px;
-      font-size: 14px;
-      width: 300px;
-      max-width: 90%;
-      border-radius: 12px;
-      border: none;
-      background: rgba(255, 255, 255, 0.7);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-      color: #0f172a;
-      cursor: pointer;
-      transition: all 0.2s ease-in-out;
-    }
-    select:hover, select:focus {
-      background: rgba(255, 255, 255, 0.85);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-      outline: none;
-    }
-
-    /* Charts */
-    .charts {
-      max-width: 1200px;
-      margin: auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 40px;
-    }
-    canvas {
-      background: rgba(255,255,255,0.8);
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.08);
-      transition: transform 0.2s ease;
-    }
-    canvas:hover {
-      transform: translateY(-5px);
-    }
-
-    /* Globe Container */
-    #globeContainer {
-      margin: 60px auto;
-      width: 460px;
-      height: 460px;
-      background: rgba(255,255,255,0.65);
-      border-radius: 50%;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* Footer */
-    footer {
-      margin-top: 60px;
-      text-align: center;
-      font-size: 14px;
-      color: #475569;
-      font-weight: 500;
-    }
-
-    /* Responsive tweaks */
-    @media (max-width: 768px) {
-      .charts {
-        grid-template-columns: 1fr;
-      }
-      #globeContainer {
-        width: 90%;
-        height: 90vw;
-      }
-    }
-  </style>
+<style>
+  body {
+    margin: 0;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #e0f2fe, #f8fafc);
+    color: #0f172a;
+  }
+  h1 { text-align: center; font-weight: 700; }
+  #status { text-align: center; color: #0284c7; margin-bottom: 15px; }
+  .controls { text-align: center; margin-bottom: 30px; }
+  select { padding: 10px; font-size: 15px; width: 280px; cursor: pointer; }
+  .charts {
+    max-width: 1200px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+  }
+  canvas {
+    background: rgba(255,255,255,0.85);
+    border-radius: 14px;
+    padding: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  }
+  #globeContainer {
+    margin: 30px auto;
+    width: 450px;
+    height: 450px;
+    border-radius: 50%;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    background: rgba(255,255,255,0.65);
+  }
+  footer { margin-top: 40px; text-align: center; font-size: 14px; color: #475569; }
+</style>
 </head>
 
 <body>
 
-  <h1>🌍 Global Internet Speed Analyzer</h1>
-  <p id="status">Loading data…</p>
+<h1>🌍 Global Internet Speed Analyzer</h1>
+<p id="status">Loading data…</p>
 
-  <div class="controls">
-    <label>Select countries to compare</label><br><br>
-    <select id="countrySelect" multiple size="10"></select>
-  </div>
+<div id="globeContainer"></div>
 
-  <div class="charts">
-    <!-- Charts placeholders -->
-    <canvas id="chart1"></canvas>
-    <canvas id="chart2"></canvas>
-    <canvas id="chart3"></canvas>
-    <canvas id="chartCompare"></canvas>
-    <canvas id="chartTop"></canvas>
-    <canvas id="chartBottom"></canvas>
-    <canvas id="chartInequality"></canvas>
-    <canvas id="chartCorrelation"></canvas>
-  </div>
+<div class="controls">
+  <label><b>Select countries to compare</b></label><br><br>
+  <select id="countrySelect" multiple size="10"></select>
+</div>
 
-  <div id="globeContainer"></div>
+<div class="charts">
+  <canvas id="chartTop"></canvas>
+  <canvas id="chart2"></canvas>
+  <canvas id="chartBottom"></canvas>
+  <canvas id="chartCompare"></canvas>
+  <canvas id="chartInequality"></canvas>
+  <canvas id="chartCorrelation"></canvas>
+</div>
 
-  <footer>
-    Global Internet Speed Dataset (2017–2024)<br />
-    Sophomore Java Data Visualization Project
-  </footer>
+<footer>
+Global Internet Speed Dataset (2017–2024)<br />
+Sophomore Java Data Visualization Project
+</footer>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
-
